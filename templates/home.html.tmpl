@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Photos by Carter J. Schmalzle</title>
+    <link rel="stylesheet" href="https://use.typekit.net/omu3phl.css">
     <link rel="stylesheet" href="/assets/style.css">
 </head>
 <body>
@@ -16,7 +17,7 @@
     </header>
     <main class="photo-grid container">
         {{ range . }}
-            {{ template "photo-link" . }}
+            {{ template "photo" . }}
         {{ end }}
     </main>
 </body>

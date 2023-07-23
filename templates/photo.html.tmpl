@@ -1,25 +1,22 @@
-{{ define "photo-detail" }}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Photo by Carter J. Schmalzle</title>
-    <link rel="stylesheet" href="/assets/style.css">
-</head>
-<body>
-    <header class="container">
-        <h1 class="title">
-            <small class="leading-text">A Photo by</small>
-            Carter J. Schmalzle
-        </h1>
-    </header>
-    <main class="container">
-        {{ template "photo" . }}
-    </main>
-    <footer class="container">
-        <a href="/">All photos</a>
-    </footer>
-</body>
-</html>
+{{ define "photo" }}
+<a class="photo" href="{{ getAssetURL . }}" target="_blank">
+    <img src="{{ getAssetURL . }}?key=standard" alt="{{ .Description }}" style="aspect-ratio: {{ .Width }} / {{ .Height }};" width="500" loading="lazy">
+    <div class="meta">
+        <p>
+            <strong>{{ displayTime . }}</strong>
+        </p>
+        <hr>
+        <ul>
+            <li>{{ displayCamera . }}</li>
+            <li>{{ displayLens . }}</li>
+        </ul>
+        <hr>
+        <ul>
+            <li>{{ displayFocalLength . }}</li>
+            <li>{{ displayAperture . }}</li>
+            <li>{{ displayExposure . }}</li>
+            <li>{{ displayISO . }}</li>
+        </ul>
+    </div>
+</a>
 {{ end }}

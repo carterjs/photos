@@ -1,10 +1,12 @@
 html {
     font-size: 14pt;
-    font-family: monospace;
-    text-transform: uppercase;
+    font-family: "courier-prime", monospace;
+    font-weight: 400;
+    font-style: normal;
 }
 body {
     background-color: #222224;
+    background-image: url("/assets/grain.png");
     color: #222;
     margin-bottom: 3%;
 }
@@ -20,8 +22,17 @@ body {
     margin: 1rem 0 0rem 0;
     color: #fff;
     width: fit-content;
-    border-bottom: 4px solid rgba(255,0,0,0.5);
     padding-bottom: 0.25rem;
+}
+
+.title::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 5px;
+    background-color: rgba(255,0,0,0.5);
+    margin-top: 0.5rem;
+    border-radius: 3px;
 }
 
 .leading-text {
@@ -46,10 +57,30 @@ body {
     box-sizing: border-box;
     padding: 0.5rem;
     margin-top: 1rem;
-    background-color: #fff;
+    background-color: rgba(255,255,255,0.9);
     box-shadow: 10px 10px 15px rgba(0, 0, 0, 0.25), -5px -5px 10px rgba(0, 0, 0, 0.25);
     break-inside: avoid;
     border-radius: 3px;
+    position: relative;
+    overflow: hidden;
+    transition: background-color 200ms ease;
+}
+
+.photo:hover {
+    background-color: rgba(255,255,255,0.5);
+}
+
+.photo::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #ffffdd;
+    background-image: url("/assets/grain.png");
+    z-index: -1;
+    opacity: 1;
 }
 
 .photo img {
@@ -80,7 +111,7 @@ body {
 hr {
     margin: 0.25rem 0;
     border: none;
-    border-top: 1px dotted #ccc;
+    border-top: 1px dotted rgba(0,0,0,0.2);
 }
 
 .meta ul {
@@ -95,23 +126,4 @@ hr {
 .meta ul li {
     display: inline-block;
     margin-right: 1rem;
-}
-
-footer {
-    text-align: right;
-    color: #888;
-}
-
-footer a {
-    color: #fff;
-    text-decoration: none;
-    display: inline-block;
-    padding-bottom: 0.25rem;
-    border-bottom: 5px solid transparent;
-    transition: border-color 250ms ease-in-out;
-    margin: 1rem 0;
-}
-
-footer a:hover {
-    border-color: rgba(255,0,0,0.5);
 }

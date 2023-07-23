@@ -65,7 +65,7 @@ var (
 
 var templates = template.Must(template.New("").Funcs(template.FuncMap{
 	"getAssetURL": func(photo Photo) string {
-		return fmt.Sprintf("%s/assets/%s?key=standard", directusHost, photo.ID)
+		return fmt.Sprintf("%s/assets/%s", directusHost, photo.ID)
 	},
 	"displayCamera": func(photo Photo) string {
 		if photo.Meta.IFD0.Make == "" {
@@ -140,32 +140,11 @@ func main() {
 		}
 
 		if r.URL.Path != "/" {
-			segments := strings.Split(strings.Trim(r.URL.Path, "/"), "/")
-
-			// unknown path
-			if len(segments) > 1 {
-				http.Error(w, "Not found", http.StatusNotFound)
-				return
-			}
-
-			// photo detail page
-			id := segments[0]
-			photo, err := getPhoto(id)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusNotFound)
-				return
-			}
-
-			err = templates.ExecuteTemplate(w, "photo-detail", photo)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-
+			http.Error(w, "Not found", http.StatusNotFound)
 			return
 		}
 
-		// home
+		// home page
 		photos, err := getPhotos()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -204,23 +183,4 @@ func getPhotos() ([]Photo, error) {
 	}
 
 	return body.Data, nil
-}
-
-func getPhoto(id string) (Photo, error) {
-	url := fmt.Sprintf("%s/files/%s?fields=id,title,description,metadata,width,height&filter[folder][_eq]=%s", directusHost, id, folderID)
-	resp, err := http.Get(url)
-	if err != nil {
-		return Photo{}, err
-	}
-	defer resp.Body.Close()
-
-	var body struct {
-		Photo `json:"data"`
-	}
-	err = json.NewDecoder(resp.Body).Decode(&body)
-	if err != nil {
-		return Photo{}, err
-	}
-
-	return body.Photo, nil
 }
