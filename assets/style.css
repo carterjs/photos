@@ -1,0 +1,117 @@
+html {
+    font-size: 14pt;
+    font-family: monospace;
+    text-transform: uppercase;
+}
+body {
+    background-color: #222224;
+    color: #222;
+    margin-bottom: 3%;
+}
+
+.container {
+    margin: 0 auto;
+    max-width: 1280px;
+    padding: 0rem 1rem;
+}
+
+.title {
+    font-size: 1.3rem;
+    margin: 1rem 0 0rem 0;
+    color: #fff;
+    width: fit-content;
+    border-bottom: 4px solid rgba(255,0,0,0.5);
+    padding-bottom: 0.25rem;
+}
+
+.leading-text {
+    font-size: 0.75rem;
+    color: #999;
+    display: block;
+    letter-spacing: 1.2px;
+}
+
+.photo-grid {
+    column-count: 2;
+    column-width: 500px;
+    column-gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.photo {
+    display: inline-block;
+    text-decoration: none;
+    color: #000;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.5rem;
+    margin-top: 1rem;
+    background-color: #fff;
+    box-shadow: 10px 10px 15px rgba(0, 0, 0, 0.25), -5px -5px 10px rgba(0, 0, 0, 0.25);
+    break-inside: avoid;
+    border-radius: 3px;
+}
+
+.photo img {
+    width: 100%;
+    height: auto;
+}
+
+.meta {
+    font-size: 10pt;
+    padding: 0.5rem;
+    line-height: 1.5;
+    display: block;
+    box-sizing: border-box;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.meta p {
+    margin: 0;
+}
+
+.meta__title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+hr {
+    margin: 0.25rem 0;
+    border: none;
+    border-top: 1px dotted #ccc;
+}
+
+.meta ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    white-space: nowrap;
+    overflow-x: auto;
+}
+
+.meta ul li {
+    display: inline-block;
+    margin-right: 1rem;
+}
+
+footer {
+    text-align: right;
+    color: #888;
+}
+
+footer a {
+    color: #fff;
+    text-decoration: none;
+    display: inline-block;
+    padding-bottom: 0.25rem;
+    border-bottom: 5px solid transparent;
+    transition: border-color 250ms ease-in-out;
+    margin: 1rem 0;
+}
+
+footer a:hover {
+    border-color: rgba(255,0,0,0.5);
+}

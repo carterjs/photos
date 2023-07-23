@@ -1,0 +1,24 @@
+{{ define "home" }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photos by Carter J. Schmalzle</title>
+    <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+    <header class="container">
+        <h1 class="title">
+            <small class="leading-text">Photos by</small>
+            Carter J. Schmalzle
+        </h1>
+    </header>
+    <main class="photo-grid container">
+        {{ range . }}
+            {{ template "photo-link" . }}
+        {{ end }}
+    </main>
+</body>
+</html>
+{{ end }}

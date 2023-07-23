@@ -1,0 +1,32 @@
+{{ define "photo-link" -}}
+<a class="photo" href="/{{ .ID }}">
+    {{ template "photo-base" . }}
+</a>
+{{- end }}
+
+{{ define "photo" -}}
+<div class="photo">
+    {{ template "photo-base" . }}
+</div>
+{{- end }}
+
+{{ define "photo-base" -}}
+<img src="{{ getAssetURL . }}" alt="{{ .Description }}" style="aspect-ratio: {{ .Width }} / {{ .Height }};" width="500" loading="lazy">
+<div class="meta">
+    <p>
+        <strong>{{ displayTime . }}</strong>
+    </p>
+    <hr>
+    <ul>
+        <li>{{ displayCamera . }}</li>
+        <li>{{ displayLens . }}</li>
+    </ul>
+    <hr>
+    <ul>
+        <li>{{ displayFocalLength . }}</li>
+        <li>{{ displayAperture . }}</li>
+        <li>{{ displayExposure . }}</li>
+        <li>{{ displayISO . }}</li>
+    </ul>
+</div>
+{{- end }}
