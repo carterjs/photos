@@ -35,8 +35,8 @@ type (
 		FNumber                 float64
 		ISO                     int
 		DateTimeOriginal        time.Time
-		FocalLength             int
-		FocalLengthIn35mmFormat int
+		FocalLength             float64
+		FocalLengthIn35mmFormat float64
 		LensMake                string
 		LensModel               string
 	}
@@ -90,11 +90,14 @@ var templates = template.Must(template.New("").Funcs(template.FuncMap{
 			return ""
 		}
 
+		focalLength := strconv.FormatFloat(photo.Meta.EXIF.FocalLength, 'f', -1, 64)
+		focalLengthIn35mmFormat := strconv.FormatFloat(photo.Meta.FocalLengthIn35mmFormat, 'f', -1, 64)
+
 		if photo.Meta.EXIF.FocalLengthIn35mmFormat != 0 {
-			return fmt.Sprintf("%dmm (%dmm FFE)", photo.Meta.EXIF.FocalLength, photo.Meta.EXIF.FocalLengthIn35mmFormat)
+			return fmt.Sprintf("%smm (%smm FFE)", focalLength, focalLengthIn35mmFormat)
 		}
 
-		return fmt.Sprintf("%dmm", photo.Meta.EXIF.FocalLength)
+		return fmt.Sprintf("%smm", focalLength)
 	},
 	"displayExposure": func(photo Photo) string {
 		if photo.Meta.EXIF.ExposureTime == 0 {
