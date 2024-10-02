@@ -121,7 +121,7 @@ var templates = template.Must(template.New("").Funcs(template.FuncMap{
 			return ""
 		}
 
-		if photo.Meta.EXIF.ExposureTime > 1 {
+		if photo.Meta.EXIF.ExposureTime >= 1 {
 			return fmt.Sprintf("%d sec", int(photo.Meta.EXIF.ExposureTime))
 		}
 
