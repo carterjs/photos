@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 	"text/template"
@@ -31,21 +32,22 @@ type (
 		Model string
 	}
 	EXIF struct {
-		ExposureTime            float64
-		FNumber                 float64
-		ISO                     int
-		DateTimeOriginal        time.Time
-		FocalLength             float64
-		FocalLengthIn35mmFormat float64
-		LensMake                string
-		LensModel               string
+		ExposureTime          float64
+		FNumber               float64
+		ISOSpeedRatings       int
+		DateTimeOriginal      time.Time
+		FocalLength           float64
+		FocalLengthIn35mmFilm float64
+		LensMake              string
+		LensModel             string
 	}
 )
 
 var (
-	port         = envOrDefault("PORT", "8080")
-	directusHost = envOrDefault("DIRECTUS_HOST", "https://content.carterjs.com")
-	folderID     = envOrDefault("DIRECTUS_FOLDER_ID", "a0727005-2c49-47d3-a14c-c2d69e928854")
+	port          = envOrDefault("PORT", "8080")
+	directusHost  = envOrDefault("DIRECTUS_HOST", "https://content.carterjs.com")
+	folderID      = envOrDefault("DIRECTUS_FOLDER_ID", "360ad7fe-dbe0-4ffc-af2b-9347027dc0a8")
+	directusToken = envOrDefault("DIRECTUS_TOKEN", "")
 )
 
 func envOrDefault(key, defaultValue string) string {
@@ -64,8 +66,23 @@ var (
 )
 
 var templates = template.Must(template.New("").Funcs(template.FuncMap{
+	"getPreviewURL": func(photo Photo) string {
+		url := fmt.Sprintf("%s/assets/%s?key=card", directusHost, photo.ID)
+
+		if directusToken != "" {
+			url += "&access_token=" + directusToken
+		}
+
+		return url
+	},
 	"getAssetURL": func(photo Photo) string {
-		return fmt.Sprintf("%s/assets/%s", directusHost, photo.ID)
+		url := fmt.Sprintf("%s/assets/%s?key=web", directusHost, photo.ID)
+
+		if directusToken != "" {
+			url += "&access_token=" + directusToken
+		}
+
+		return url
 	},
 	"displayCamera": func(photo Photo) string {
 		if photo.Meta.IFD0.Make == "" {
@@ -91,9 +108,9 @@ var templates = template.Must(template.New("").Funcs(template.FuncMap{
 		}
 
 		focalLength := strconv.FormatFloat(photo.Meta.EXIF.FocalLength, 'f', -1, 64)
-		focalLengthIn35mmFormat := strconv.FormatFloat(photo.Meta.FocalLengthIn35mmFormat, 'f', -1, 64)
+		focalLengthIn35mmFormat := strconv.FormatFloat(photo.Meta.FocalLengthIn35mmFilm, 'f', -1, 64)
 
-		if photo.Meta.EXIF.FocalLengthIn35mmFormat != 0 {
+		if photo.Meta.EXIF.FocalLengthIn35mmFilm != 0 {
 			return fmt.Sprintf("%smm (%smm FFE)", focalLength, focalLengthIn35mmFormat)
 		}
 
@@ -102,6 +119,10 @@ var templates = template.Must(template.New("").Funcs(template.FuncMap{
 	"displayExposure": func(photo Photo) string {
 		if photo.Meta.EXIF.ExposureTime == 0 {
 			return ""
+		}
+
+		if photo.Meta.EXIF.ExposureTime > 1 {
+			return fmt.Sprintf("%d sec", int(photo.Meta.EXIF.ExposureTime))
 		}
 
 		return fmt.Sprintf("1/%d sec", int(1/photo.Meta.EXIF.ExposureTime))
@@ -114,11 +135,11 @@ var templates = template.Must(template.New("").Funcs(template.FuncMap{
 		return fmt.Sprintf("f/%.1f", photo.Meta.EXIF.FNumber)
 	},
 	"displayISO": func(photo Photo) string {
-		if photo.Meta.EXIF.ISO == 0 {
+		if photo.Meta.EXIF.ISOSpeedRatings == 0 {
 			return ""
 		}
 
-		return fmt.Sprintf("ISO %d", photo.Meta.EXIF.ISO)
+		return fmt.Sprintf("ISO %d", photo.Meta.EXIF.ISOSpeedRatings)
 	},
 	"getCopyrightYear": func() string {
 		return strconv.Itoa(time.Now().Year())
@@ -171,11 +192,24 @@ func main() {
 
 func getPhotos() ([]Photo, error) {
 	url := fmt.Sprintf("%s/files?fields=id,title,description,metadata,width,height&filter[folder][_eq]=%s", directusHost, folderID)
-	resp, err := http.Get(url)
+
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	if directusToken != "" {
+		req.Header.Set("Authorization", "Bearer "+directusToken)
+	}
+
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	}
 
 	var body struct {
 		Data []Photo `json:"data"`
@@ -184,6 +218,11 @@ func getPhotos() ([]Photo, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// sort by original date
+	sort.Slice(body.Data, func(i, j int) bool {
+		return body.Data[i].Meta.EXIF.DateTimeOriginal.After(body.Data[j].Meta.EXIF.DateTimeOriginal)
+	})
 
 	return body.Data, nil
 }

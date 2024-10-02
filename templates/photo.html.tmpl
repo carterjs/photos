@@ -1,6 +1,6 @@
 {{ define "photo" }}
 <a class="photo" href="{{ getAssetURL . }}" target="_blank">
-    <img src="{{ getAssetURL . }}?key=standard" alt="{{ .Description }}" style="aspect-ratio: {{ .Width }} / {{ .Height }};" width="500" loading="lazy">
+    <img src="{{ getPreviewURL . }}" alt="{{ .Description }}" style="aspect-ratio: {{ .Width }} / {{ .Height }};" width="500" loading="lazy">
     <div class="meta">
         <p>
             <strong>{{ displayTime . }}</strong>
