@@ -9,7 +9,6 @@ import (
 	"os"
 	"sort"
 	"strconv"
-	"strings"
 	"text/template"
 	"time"
 )
@@ -84,62 +83,19 @@ var templates = template.Must(template.New("").Funcs(template.FuncMap{
 
 		return url
 	},
-	"displayCamera": func(photo Photo) string {
-		if photo.Meta.IFD0.Make == "" {
-			return ""
+	"displayTitle": func(photo Photo) string {
+		if photo.Title != "" {
+			return photo.Title
 		}
-		return fmt.Sprintf("%s %s", photo.Meta.IFD0.Make, photo.Meta.IFD0.Model)
+
+		return ""
 	},
-	"displayLens": func(photo Photo) string {
-		if photo.Meta.EXIF.LensMake == "" {
-			return ""
+	"displayDescription": func(photo Photo) string {
+		if photo.Description != "" {
+			return photo.Description
 		}
 
-		name := fmt.Sprintf("%s %s", photo.Meta.EXIF.LensMake, photo.Meta.EXIF.LensModel)
-
-		// Remove null bytes (only a problem with Viltrox lens so far...)
-		name = strings.ReplaceAll(name, "\x00", "")
-
-		return name
-	},
-	"displayFocalLength": func(photo Photo) string {
-		if photo.Meta.EXIF.FocalLength == 0 {
-			return ""
-		}
-
-		focalLength := strconv.FormatFloat(photo.Meta.EXIF.FocalLength, 'f', -1, 64)
-		focalLengthIn35mmFormat := strconv.FormatFloat(photo.Meta.FocalLengthIn35mmFilm, 'f', -1, 64)
-
-		if photo.Meta.EXIF.FocalLengthIn35mmFilm != 0 {
-			return fmt.Sprintf("%smm (%smm FFE)", focalLength, focalLengthIn35mmFormat)
-		}
-
-		return fmt.Sprintf("%smm", focalLength)
-	},
-	"displayExposure": func(photo Photo) string {
-		if photo.Meta.EXIF.ExposureTime == 0 {
-			return ""
-		}
-
-		if photo.Meta.EXIF.ExposureTime >= 1 {
-			return fmt.Sprintf("%d sec", int(photo.Meta.EXIF.ExposureTime))
-		}
-
-		return fmt.Sprintf("1/%d sec", int(1/photo.Meta.EXIF.ExposureTime))
-	},
-	"displayAperture": func(photo Photo) string {
-		if photo.Meta.EXIF.FNumber == 0 {
-			return ""
-		}
-
-		return fmt.Sprintf("f/%.1f", photo.Meta.EXIF.FNumber)
-	},
-	"displayISO": func(photo Photo) string {
-		if photo.Meta.EXIF.ISOSpeedRatings == 0 {
-			return ""
-		}
-
-		return fmt.Sprintf("ISO %d", photo.Meta.EXIF.ISOSpeedRatings)
+		return ""
 	},
 	"getCopyrightYear": func() string {
 		return strconv.Itoa(time.Now().Year())

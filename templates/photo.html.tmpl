@@ -1,22 +1,12 @@
 {{ define "photo" }}
 <a class="photo" href="{{ getAssetURL . }}" target="_blank">
-    <img src="{{ getPreviewURL . }}" alt="{{ .Description }}" style="aspect-ratio: {{ .Width }} / {{ .Height }};" width="500" loading="lazy">
-    <div class="meta">
-        <p>
-            <strong>{{ displayTime . }}</strong>
+    <img src="{{ getPreviewURL . }}" alt="{{ .Description }}" style="aspect-ratio: {{ .Width }} / {{ .Height }};" width="500" loading="lazy"><!--
+    --><div class="text">
+        <p class="meta">
+            <span>{{ displayTime . }}</span>
+            <span>{{ displayTitle . }}</span>
         </p>
-        <hr>
-        <ul>
-            <li>{{ displayCamera . }}</li>
-            <li>{{ displayLens . }}</li>
-        </ul>
-        <hr>
-        <ul>
-            <li>{{ displayFocalLength . }}</li>
-            <li>{{ displayAperture . }}</li>
-            <li>{{ displayExposure . }}</li>
-            <li>{{ displayISO . }}</li>
-        </ul>
+        <p class="description">{{ displayDescription . }}</p>
     </div>
 </a>
 {{ end }}
